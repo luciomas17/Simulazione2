@@ -64,8 +64,7 @@ public class Condiment {
 
 	@Override
 	public String toString() {
-		return condiment_id + " - "+ display_name + " ("
-				+ condiment_calories + " cal)";
+		return String.format("%s (%.2f cal)", display_name, condiment_calories);
 	}
 
 	@Override

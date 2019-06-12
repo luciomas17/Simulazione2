@@ -50,7 +50,7 @@ public class FoodDao {
 	}
 	
 	public List<Condiment> listAllCondiment(){
-		String sql = "SELECT * FROM condiment" ;
+		String sql = "SELECT * FROM condiment ORDER" ;
 		try {
 			Connection conn = DBConnect.getConnection() ;
 
@@ -86,7 +86,7 @@ public class FoodDao {
 
 	public Map<Integer, Condiment> mapCondimentByCalories(double calories){
 		
-		String sql = "SELECT * FROM condiment WHERE condiment_calories <= ?";
+		String sql = "SELECT * FROM condiment WHERE condiment_calories <= ? ORDER BY condiment_calories DESC";
 		Map<Integer, Condiment> map = new HashMap<>();
 				
 		try {

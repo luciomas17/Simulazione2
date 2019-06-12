@@ -34,7 +34,7 @@ public class FoodController {
     private Button btnCreaGrafo; // Value injected by FXMLLoader
 
     @FXML // fx:id="boxIngrediente"
-    private ComboBox<?> boxIngrediente; // Value injected by FXMLLoader
+    private ComboBox<Condiment> boxIngrediente; // Value injected by FXMLLoader
 
     @FXML // fx:id="btnDietaEquilibrata"
     private Button btnDietaEquilibrata; // Value injected by FXMLLoader
@@ -45,7 +45,34 @@ public class FoodController {
 
     @FXML
     void doCalcolaDieta(ActionEvent event) {
-
+    	txtResult.clear();
+    	
+    	if(model.getVertexListWithNumOfFoods().isEmpty()) {
+    		txtResult.appendText("Creare prima grafo ingredienti.");
+    		return;
+    	}
+    	
+    	Condiment c;
+    	if(boxIngrediente.getSelectionModel().isEmpty()) {
+    		txtResult.appendText("Selezionare un ingrediente di partenza.");
+    		return;
+    	} else
+    		c = boxIngrediente.getSelectionModel().getSelectedItem();
+    	
+    	try {
+			double calories = Double.parseDouble(txtCalorie.getText());
+			
+			model.findBestDiet(c, calories);
+			
+			txtResult.appendText("Dieta migliore:\n\n");
+			for(Condiment oth : model.getBestDiet())
+				txtResult.appendText(oth + "\n");
+			txtResult.appendText(String.format("\nTotale calorie: %.2f cal", model.getBestCaloriesCount()));
+			
+		} catch (NumberFormatException e) {
+			txtResult.appendText("Inserire un numero reale di calorie valido.");
+			e.printStackTrace();
+		}
     }
 
     @FXML
@@ -57,11 +84,13 @@ public class FoodController {
 			
 			model.createGraph(calories);
 			
-			List<Condiment> condiments = model.getOrderedCondimentList();
+			List<Condiment> condiments = model.getVertexListWithNumOfFoods();
 			
 			for(Condiment c : condiments)
-				txtResult.appendText(String.format("Ingrediente: %s, Calorie: %f, Numero di cibi: %d\n", c.getDisplay_name(), c.getCondiment_calories(),
+				txtResult.appendText(String.format("%s (%.2f cal) - %d cibi\n", c.getDisplay_name(), c.getCondiment_calories(),
 						c.getNumOfFoods()));
+			
+			addItemsToBoxIngrediente();
 			
 		} catch (NumberFormatException e) {
 			txtResult.appendText("Inserire un numero reale di calorie valido.");
@@ -70,7 +99,11 @@ public class FoodController {
 
     }
 
-    @FXML // This method is called by the FXMLLoader when initialization is complete
+    private void addItemsToBoxIngrediente() {
+		boxIngrediente.getItems().addAll(model.getVertexList());
+	}
+
+	@FXML // This method is called by the FXMLLoader when initialization is complete
     void initialize() {
         assert txtCalorie != null : "fx:id=\"txtCalorie\" was not injected: check your FXML file 'Food.fxml'.";
         assert btnCreaGrafo != null : "fx:id=\"btnCreaGrafo\" was not injected: check your FXML file 'Food.fxml'.";

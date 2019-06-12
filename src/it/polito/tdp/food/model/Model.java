@@ -20,7 +20,7 @@ public class Model {
 	public class ComparatorOfCondimentsByCalories implements Comparator<Condiment> {
 		@Override
 		public int compare(Condiment c1, Condiment c2) {
-			return (int)(c2.getCondiment_calories() - c1.getCondiment_calories());
+			return Double.compare(c2.getCondiment_calories(),c1.getCondiment_calories());
 		}
 	}
 	
@@ -65,10 +65,12 @@ public class Model {
 	}
 	
 	public List<Condiment> getVertexList() {
-		return new ArrayList<>(this.graph.vertexSet());
+		List<Condiment> list = new ArrayList<>(this.graph.vertexSet());
+		Collections.sort(list, new ComparatorOfCondimentsByCalories());
+		return list;
 	}
 	
-	public List<Condiment> getOrderedCondimentList() {
+	public List<Condiment> getVertexListWithNumOfFoods() {
 		List<Condiment> list = new ArrayList<>();
 		
 		for(Condiment c : condimentIdMap.values()) {
@@ -140,4 +142,7 @@ public class Model {
 		return count;
 	}
 	
+	public List<Condiment> getBestDiet() {
+		return bestDiet;
+	}
 }
